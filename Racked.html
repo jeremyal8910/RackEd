@@ -47,7 +47,7 @@ input,select,textarea{font-family:inherit;}
 
 /* ---------- HEADER ---------- */
 header.top{
-  padding:22px 18px 14px;
+  padding:calc(22px + env(safe-area-inset-top)) 18px 14px;
   border-bottom:1px solid var(--line);
   position:sticky;top:0;
   background:rgba(24,26,27,0.86);
@@ -102,21 +102,41 @@ select.split-select{
   padding:8px 10px;font-family:'Inter',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.03em;text-transform:uppercase;margin-bottom:12px;width:100%;
 }
 .exercise-row{
-  display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);
+  display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--line);
 }
 .exercise-row:first-of-type{border-top:none;}
 .exercise-row .chk{
-  width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;
+  width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;margin-top:1px;
   display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;
 }
 .exercise-row .chk.checked{background:var(--ok);border-color:var(--ok);color:var(--bg);box-shadow:0 0 10px rgba(var(--iron-rgb),0.53);}
 .exercise-row .exinfo{flex:1;min-width:0;}
-.exercise-row .exname{font-size:14px;font-weight:600;}
-.exercise-row .extarget{font-size:11px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;}
-.exercise-row input.wt{
-  width:56px;background:var(--bg-sunken);border:1px solid var(--line);border-radius:6px;color:var(--ink);
-  text-align:center;padding:6px 2px;font-family:'JetBrains Mono',monospace;font-size:13px;
+.exname-row{display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.exercise-row .exname{font-size:14px;font-weight:600;cursor:pointer;transition:color .15s ease;}
+.exercise-row .exname:active{color:var(--iron);}
+.exercise-row .extarget{font-size:11px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;margin-top:1px;}
+.ex-suggestion{font-size:11px;color:var(--amber);opacity:0.9;margin-top:4px;font-style:italic;}
+.ex-sets-summary{font-size:11.5px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;margin-top:5px;}
+.ex-hist-toggle{
+  font-size:10px;font-weight:600;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.05em;
+  border:1px solid var(--line);border-radius:20px;padding:2px 8px;background:var(--bg-sunken);flex-shrink:0;
 }
+.ex-hist-toggle:active{transform:scale(0.94);}
+.ex-history-panel{margin-top:8px;background:var(--bg-sunken);border:1px solid var(--line);border-radius:8px;padding:8px 10px;}
+.ex-hist-row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-dim);padding:3px 0;font-family:'JetBrains Mono',monospace;gap:10px;}
+.ex-hist-row.empty{justify-content:center;font-style:italic;}
+.ex-sets-panel{margin-top:8px;background:var(--bg-sunken);border:1px solid var(--line);border-radius:8px;padding:10px;animation:rowIn .25s ease;}
+.ex-set-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.ex-set-label{font-size:11px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;width:44px;flex-shrink:0;}
+.ex-set-row input.set-wt,.ex-set-row input.set-reps{
+  flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);
+  text-align:center;padding:7px 2px;font-family:'JetBrains Mono',monospace;font-size:13px;
+}
+.ex-add-set{
+  width:100%;margin-top:2px;padding:8px;border-radius:6px;border:1px dashed var(--line);background:none;color:var(--ink-dim);
+  font-family:'Inter',sans-serif;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;
+}
+.ex-add-set:active{transform:scale(0.96);}
 textarea.notes{
   width:100%;background:var(--bg-sunken);border:1px solid var(--line);border-radius:6px;color:var(--ink);
   padding:10px;font-size:13px;margin-top:10px;resize:vertical;min-height:50px;
@@ -153,6 +173,7 @@ textarea.notes{
 .month-nav h2{margin:0;color:var(--ink);}
 .graph-sub{font-size:12px;color:var(--ink-dim);margin-top:-6px;margin-bottom:10px;}
 .trend-svg{width:100%;height:auto;display:block;}
+.trend-svg.big-graph{height:230px;}
 
 /* ---------- GOALS ---------- */
 .goal-item{border-top:1px solid var(--line);padding:14px 0;}
@@ -352,6 +373,18 @@ nav.bottom button.active svg{stroke:var(--iron);transform:translateY(-1px);}
 }
 
 .bento-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+
+.dash-mosaic{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+.mos-full{grid-column:1 / -1;margin-bottom:0;}
+.mos-half{grid-column:span 1;margin-bottom:0;}
+.mos-h-md{min-height:230px;display:flex;flex-direction:column;}
+.mos-h-lg{min-height:310px;display:flex;flex-direction:column;}
+.mos-h-xl{min-height:300px;display:flex;flex-direction:column;}
+.mos-h-md .muscle-focus-wrap,.mos-h-lg #recentSessionsList,.mos-h-md #dashGoalsList{flex:1;}
+@media (max-width:380px){
+  .dash-mosaic{grid-template-columns:1fr;}
+  .mos-half{grid-column:1 / -1;}
+}
 .bento-card{margin-bottom:0;padding:16px;}
 .bento-icon-badge{
   width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;
@@ -380,8 +413,8 @@ nav.bottom button.active svg{stroke:var(--iron);transform:translateY(-1px);}
 
 .graph-wrap{position:relative;}
 
-.muscle-focus-wrap{display:flex;align-items:center;gap:24px;margin-top:4px;}
-.muscle-focus-legend{flex:1;display:flex;flex-direction:column;gap:10px;}
+.muscle-focus-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:4px;}
+.muscle-focus-legend{flex:1;width:100%;display:flex;flex-direction:column;gap:10px;}
 .mf-legend-row{display:flex;align-items:center;gap:9px;font-size:13px;}
 .mf-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .mf-label{flex:1;color:var(--ink);font-weight:500;}
@@ -414,11 +447,11 @@ nav.bottom button.active svg{stroke:var(--iron);transform:translateY(-1px);}
 .dash-daycell.is-today .cdot{background:var(--bg);}
 .dash-daycell.blank{visibility:hidden;}
 
-.protein-row{display:flex;align-items:center;gap:22px;}
-.protein-ring-wrap{position:relative;width:100px;height:100px;flex-shrink:0;}
+.protein-row{display:flex;align-items:center;gap:14px;}
+.protein-ring-wrap{position:relative;width:76px;height:76px;flex-shrink:0;}
 .protein-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.protein-ring-num{font-size:17px;font-weight:700;color:var(--ink);}
-.protein-ring-label{font-size:9.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em;margin-top:1px;}
+.protein-ring-num{font-size:14px;font-weight:700;color:var(--ink);}
+.protein-ring-label{font-size:8.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px;}
 .protein-nums{flex:1;display:flex;flex-direction:column;gap:10px;}
 
 .dash-goal-row{padding:10px 0;border-top:1px solid var(--line);}
@@ -618,71 +651,72 @@ nav.bottom button.active svg{stroke:var(--iron);transform:translateY(-1px);}
       </div>
     </div>
 
-    <div class="card">
-      <div class="dash-card-head">
-        <div>
-          <h2 class="dash-h2">Progress Overview</h2>
+    <div class="dash-mosaic">
+      <div class="card mos-full mos-h-xl">
+        <div class="dash-card-head">
+          <div>
+            <h2 class="dash-h2">Progress Overview</h2>
+          </div>
+          <span class="dash-dropdown">Last 8 Weeks <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6"/></svg></span>
         </div>
-        <span class="dash-dropdown">Last 8 Weeks <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6"/></svg></span>
-      </div>
-      <div class="graph-wrap">
-        <svg id="dashConsistencyGraph" viewBox="0 0 560 200" class="trend-svg" preserveAspectRatio="none"></svg>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="dash-card-head">
-        <h2 class="dash-h2">Split Focus</h2>
-        <span class="dash-dropdown">Last 60 Days <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6"/></svg></span>
-      </div>
-      <div id="muscleFocusWrap" class="muscle-focus-wrap"></div>
-    </div>
-
-    <div class="card">
-      <div class="dash-card-head">
-        <h2 class="dash-h2">Recent Sessions</h2>
-        <button class="dash-link" id="viewAllSessionsBtn">View All</button>
-      </div>
-      <div id="recentSessionsList"></div>
-    </div>
-
-    <div class="card">
-      <div class="dash-card-head">
-        <h2 class="dash-h2">Calendar</h2>
-        <div class="dash-cal-nav">
-          <button id="dashCalPrev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button id="dashCalNext"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="graph-wrap">
+          <svg id="dashConsistencyGraph" viewBox="0 0 560 200" class="trend-svg big-graph" preserveAspectRatio="none"></svg>
         </div>
       </div>
-      <p class="dash-cal-label" id="dashCalLabel"></p>
-      <div class="month-grid" id="dashCalDow"></div>
-      <div class="month-grid" id="dashCalGrid"></div>
-    </div>
 
-    <div class="card">
-      <div class="dash-card-head">
-        <h2 class="dash-h2">Goals</h2>
-        <button class="dash-link" id="editGoalsBtn">Edit Goals</button>
+      <div class="card mos-half mos-h-md">
+        <div class="dash-card-head">
+          <h2 class="dash-h2">Split Focus</h2>
+        </div>
+        <div id="muscleFocusWrap" class="muscle-focus-wrap"></div>
       </div>
-      <div id="dashGoalsList"></div>
-    </div>
 
-    <div class="card">
-      <div class="dash-card-head">
-        <h2 class="dash-h2">Protein Summary</h2>
-        <button class="dash-link" id="viewEatingBtn">View Details</button>
+      <div class="card mos-half mos-h-lg">
+        <div class="dash-card-head">
+          <h2 class="dash-h2">Recent</h2>
+          <button class="dash-link" id="viewAllSessionsBtn">All</button>
+        </div>
+        <div id="recentSessionsList"></div>
       </div>
-      <div class="protein-row">
-        <div class="protein-ring-wrap">
-          <svg id="dashProteinRing" width="100" height="100" viewBox="0 0 100 100"></svg>
-          <div class="protein-ring-center">
-            <p class="protein-ring-num mono" id="dashProteinBig">0g</p>
-            <p class="protein-ring-label">Protein</p>
+
+      <div class="card mos-full mos-h-md">
+        <div class="dash-card-head">
+          <h2 class="dash-h2">Calendar</h2>
+          <div class="dash-cal-nav">
+            <button id="dashCalPrev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button id="dashCalNext"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
         </div>
-        <div class="protein-nums">
-          <div class="mf-legend-row"><span class="mf-dot" style="background:#A3E635"></span><span class="mf-label">Today's intake</span><span class="mf-pct" id="dashProteinToday">0g</span></div>
-          <div class="mf-legend-row"><span class="mf-dot" style="background:#2D3631"></span><span class="mf-label">Daily target</span><span class="mf-pct" id="dashProteinTarget">0g</span></div>
+        <p class="dash-cal-label" id="dashCalLabel"></p>
+        <div class="month-grid" id="dashCalDow"></div>
+        <div class="month-grid" id="dashCalGrid"></div>
+      </div>
+
+      <div class="card mos-half mos-h-md">
+        <div class="dash-card-head">
+          <h2 class="dash-h2">Goals</h2>
+          <button class="dash-link" id="editGoalsBtn">Edit</button>
+        </div>
+        <div id="dashGoalsList"></div>
+      </div>
+
+      <div class="card mos-half mos-h-md">
+        <div class="dash-card-head">
+          <h2 class="dash-h2">Protein</h2>
+          <button class="dash-link" id="viewEatingBtn">Details</button>
+        </div>
+        <div class="protein-row">
+          <div class="protein-ring-wrap">
+            <svg id="dashProteinRing" width="76" height="76" viewBox="0 0 76 76"></svg>
+            <div class="protein-ring-center">
+              <p class="protein-ring-num mono" id="dashProteinBig">0g</p>
+              <p class="protein-ring-label">Protein</p>
+            </div>
+          </div>
+          <div class="protein-nums">
+            <div class="mf-legend-row"><span class="mf-dot" style="background:#A3E635"></span><span class="mf-label">Today</span><span class="mf-pct" id="dashProteinToday">0g</span></div>
+            <div class="mf-legend-row"><span class="mf-dot" style="background:#2D3631"></span><span class="mf-label">Target</span><span class="mf-pct" id="dashProteinTarget">0g</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -976,8 +1010,9 @@ async function getDayRecord(dateStr){
   let rec = await sGet("day:"+dateStr);
   if(!rec){
     const split = splitForDate(parseDate(dateStr));
-    rec = { split, completed:false, notes:"", exDone:{}, exWeight:{} };
+    rec = { split, completed:false, notes:"", exDone:{}, exWeight:{}, exReps:{} };
   }
+  if(!rec.exReps) rec.exReps = {};
   dayCache[dateStr] = rec;
   return rec;
 }
@@ -1052,13 +1087,13 @@ async function renderToday(){
   sel.disabled = locked;
   sel.onchange = async ()=>{
     if(locked) return;
-    rec.split=sel.value; await saveDayRecord(selectedDate,rec); renderExercises(rec, locked);
+    rec.split=sel.value; await saveDayRecord(selectedDate,rec); await renderExercises(rec, locked);
   };
 
   document.getElementById("dayNotes").value = rec.notes||"";
   document.getElementById("dayNotes").oninput = async (e)=>{ rec.notes=e.target.value; await saveDayRecord(selectedDate,rec); };
 
-  renderExercises(rec, locked);
+  await renderExercises(rec, locked);
 
   const sessionCard = document.getElementById("sessionCard");
   sessionCard.classList.toggle("session-done", locked);
@@ -1077,7 +1112,28 @@ async function renderToday(){
   };
 }
 
-function renderExercises(rec, locked=false){
+function parseSetCount(target){
+  const m = target.match(/^(\d+)\s*x/i);
+  return m ? parseInt(m[1]) : 1;
+}
+function getSetsArray(rec, idx, ex){
+  const targetCount = parseSetCount(ex.target);
+  let sets = (rec.exSets && rec.exSets[idx]) ? rec.exSets[idx].map(s=>({...s})) : null;
+  if(!sets){
+    const legacyW = rec.exWeight && rec.exWeight[idx];
+    const legacyR = rec.exReps && rec.exReps[idx];
+    sets = (legacyW||legacyR) ? [{weight:legacyW||"", reps:legacyR||""}] : [];
+  }
+  while(sets.length<targetCount) sets.push({weight:"",reps:""});
+  return sets;
+}
+function setsSummary(sets){
+  const filled = sets.filter(s=>s.weight||s.reps);
+  if(!filled.length) return "No sets logged yet";
+  return filled.map(s=>`${s.weight||"-"}×${s.reps||"-"}`).join(", ");
+}
+
+async function renderExercises(rec, locked=false){
   const list = document.getElementById("exerciseList");
   const exercises = PROGRAM[rec.split]||[];
   if(exercises.length===0){
@@ -1085,18 +1141,31 @@ function renderExercises(rec, locked=false){
     return;
   }
   list.innerHTML = "";
-  exercises.forEach((ex,idx)=>{
+  for(let idx=0; idx<exercises.length; idx++){
+    const ex = exercises[idx];
     const done = !!rec.exDone[idx];
-    const weight = rec.exWeight[idx]||"";
+    const sets = getSetsArray(rec, idx, ex);
     const row = document.createElement("div");
     row.className="exercise-row"+(locked?" locked":"");
+
+    let suggestionHtml = "";
+    const history = await getExerciseHistory(ex.name, 6);
+    const sugg = computeSuggestion(ex, history);
+    if(sugg) suggestionHtml = `<div class="ex-suggestion">${sugg.text}</div>`;
+
     row.innerHTML = `
       <div class="chk ${done?"checked":""}">${done?"✓":""}</div>
       <div class="exinfo">
-        <div class="exname">${ex.name}</div>
+        <div class="exname-row">
+          <div class="exname" data-idx="${idx}">${ex.name}</div>
+          <span class="ex-hist-toggle">History</span>
+        </div>
         <div class="extarget">${ex.target}</div>
+        ${suggestionHtml}
+        <div class="ex-sets-summary" id="exsummary-${idx}">${setsSummary(sets)}</div>
+        <div class="ex-sets-panel" id="exsets-${idx}" style="display:none;"></div>
+        <div class="ex-history-panel" id="exhist-${idx}" style="display:none;"></div>
       </div>
-      <input class="wt mono" placeholder="lb" value="${weight}" ${locked?"disabled":""}>
     `;
     if(!locked){
       row.querySelector(".chk").onclick = async ()=>{
@@ -1104,13 +1173,125 @@ function renderExercises(rec, locked=false){
         await saveDayRecord(selectedDate,rec);
         renderExercises(rec, locked);
       };
-      row.querySelector(".wt").oninput = async (e)=>{
-        rec.exWeight[idx] = e.target.value;
-        await saveDayRecord(selectedDate,rec);
+
+      const setsPanel = row.querySelector(`#exsets-${idx}`);
+      const summaryEl = row.querySelector(`#exsummary-${idx}`);
+
+      function renderSetsPanel(currentSets){
+        setsPanel.innerHTML = currentSets.map((s,si)=>`
+          <div class="ex-set-row">
+            <span class="ex-set-label">Set ${si+1}</span>
+            <input class="set-wt mono" data-si="${si}" placeholder="lb" value="${s.weight}">
+            <input class="set-reps mono" data-si="${si}" placeholder="reps" value="${s.reps}">
+          </div>
+        `).join("") + `<button class="ex-add-set">+ Add Set</button>`;
+
+        setsPanel.querySelectorAll(".set-wt").forEach(inp=>{
+          inp.oninput = async (e)=>{
+            const si = parseInt(e.target.dataset.si);
+            currentSets[si].weight = e.target.value;
+            rec.exSets = rec.exSets || {};
+            rec.exSets[idx] = currentSets;
+            await saveDayRecord(selectedDate,rec);
+            summaryEl.textContent = setsSummary(currentSets);
+          };
+        });
+        setsPanel.querySelectorAll(".set-reps").forEach(inp=>{
+          inp.oninput = async (e)=>{
+            const si = parseInt(e.target.dataset.si);
+            currentSets[si].reps = e.target.value;
+            rec.exSets = rec.exSets || {};
+            rec.exSets[idx] = currentSets;
+            await saveDayRecord(selectedDate,rec);
+            summaryEl.textContent = setsSummary(currentSets);
+          };
+        });
+        setsPanel.querySelector(".ex-add-set").onclick = ()=>{
+          currentSets.push({weight:"",reps:""});
+          renderSetsPanel(currentSets);
+        };
+      }
+
+      row.querySelector(".exname").onclick = ()=>{
+        const isOpen = setsPanel.style.display!=="none";
+        if(isOpen){ setsPanel.style.display="none"; return; }
+        renderSetsPanel(sets);
+        setsPanel.style.display="block";
+      };
+
+      row.querySelector(".ex-hist-toggle").onclick = async (e)=>{
+        e.stopPropagation();
+        const panel = row.querySelector(`#exhist-${idx}`);
+        const isOpen = panel.style.display!=="none";
+        if(isOpen){ panel.style.display="none"; return; }
+        panel.innerHTML = history.length
+          ? history.map(h=>`<div class="ex-hist-row"><span>${parseDate(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span><span>${h.sets.map(s=>`${s.weight||"-"}×${s.reps||"-"}`).join(", ")}</span></div>`).join("")
+          : `<div class="ex-hist-row empty">No history yet for this exercise.</div>`;
+        panel.style.display="block";
       };
     }
     list.appendChild(row);
-  });
+  }
+}
+
+const ISOLATION_PATTERN = /curl|lateral|extension|face pull|fly|pushdown|raise/i;
+function isLoadableExercise(ex){
+  return !/sec|min|round/i.test(ex.target);
+}
+function parseTopReps(target){
+  const m = target.match(/x\s*(\d+)(?:-(\d+))?/i);
+  if(!m) return null;
+  return m[2] ? parseInt(m[2]) : parseInt(m[1]);
+}
+function topSetOf(sets){
+  let best=null;
+  for(const s of sets){
+    const w = parseFloat(s.weight);
+    if(isNaN(w)) continue;
+    if(!best || w>parseFloat(best.weight)) best=s;
+  }
+  return best || sets[sets.length-1];
+}
+async function getExerciseHistory(exerciseName, maxResults=6){
+  const keys = await sList("day:");
+  const dates = keys.map(k=>k.replace("day:","")).filter(d=>d<=todayStr()).sort().reverse();
+  const history = [];
+  for(const ds of dates){
+    if(history.length>=maxResults) break;
+    if(ds===selectedDate) continue;
+    const stored = await sGet("day:"+ds);
+    if(!stored) continue;
+    const exList = PROGRAM[stored.split]||[];
+    const idx = exList.findIndex(e=>e.name===exerciseName);
+    if(idx===-1) continue;
+    let sets = (stored.exSets && stored.exSets[idx]) ? stored.exSets[idx] : null;
+    if(!sets){
+      const legacyW = stored.exWeight && stored.exWeight[idx];
+      const legacyR = stored.exReps && stored.exReps[idx];
+      sets = (legacyW||legacyR) ? [{weight:legacyW||"", reps:legacyR||""}] : [];
+    }
+    sets = sets.filter(s=>s.weight||s.reps);
+    if(!sets.length) continue;
+    history.push({date:ds, sets});
+  }
+  return history;
+}
+function computeSuggestion(ex, history){
+  if(!isLoadableExercise(ex)) return null;
+  if(!history.length) return {text:"No history yet — log a set to start tracking"};
+  const top = topSetOf(history[0].sets);
+  const lastWeight = parseFloat(top.weight);
+  const lastReps = parseInt(top.reps);
+  if(isNaN(lastWeight)) return {text:"No history yet — log a set to start tracking"};
+  const topTarget = parseTopReps(ex.target);
+  const increment = ISOLATION_PATTERN.test(ex.name) ? 2.5 : 5;
+  if(!isNaN(lastReps) && topTarget && lastReps>=topTarget){
+    return {text:`Suggested: ${lastWeight+increment} lb — hit ${lastReps} reps on your top set last time`};
+  }
+  if(!isNaN(lastReps)){
+    return {text:`Suggested: stay at ${lastWeight} lb — push for more reps`};
+  }
+  return {text:`Last logged: ${lastWeight} lb`};
 }
 
 /* ================= WEEK PANEL ================= */
@@ -1473,9 +1654,10 @@ function renderRing(svgEl, pct, size, r){
   const circumference = 2*Math.PI*r;
   const offset = circumference - (Math.min(100,pct)/100)*circumference;
   const c = size/2;
+  const sw = Math.max(6, Math.round(r*0.22));
   svgEl.innerHTML = `
-    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#2D3631" stroke-width="9"/>
-    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#A3E635" stroke-width="9" stroke-linecap="round"
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#2D3631" stroke-width="${sw}"/>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#A3E635" stroke-width="${sw}" stroke-linecap="round"
       stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 ${c} ${c})"
       style="filter:drop-shadow(0 0 6px rgba(163,230,53,0.55));transition:stroke-dashoffset .6s cubic-bezier(.22,1,.36,1);"/>
   `;
@@ -1486,7 +1668,7 @@ async function renderDashProtein(){
   const target = Math.round(bw*0.8);
   const rec = await getDayRecord(todayStr());
   const hit = !!rec.proteinHit;
-  renderRing(document.getElementById("dashProteinRing"), hit?100:0, 100, 42);
+  renderRing(document.getElementById("dashProteinRing"), hit?100:0, 76, 31);
   document.getElementById("dashProteinBig").textContent = hit ? target+"g" : "0g";
   document.getElementById("dashProteinToday").textContent = hit ? target+"g" : "0g";
   document.getElementById("dashProteinTarget").textContent = target+"g";
