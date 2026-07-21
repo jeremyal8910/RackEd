@@ -89,8 +89,9 @@ header.top{
 main{padding:20px 18px 20px;max-width:640px;margin:0 auto;}
 .card{background:rgba(33,37,35,0.78);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
 #sessionCard{transition:filter .5s ease, opacity .5s ease;}
-#sessionCard.session-done{filter:grayscale(0.7) brightness(0.82);opacity:0.72;}
-#sessionCard.session-done #completeBtn{pointer-events:none;}
+#sessionCard.session-done #exerciseList,#sessionCard.session-done #dayNotes,#sessionCard.session-done .split-select{
+  filter:grayscale(0.7) brightness(0.82);opacity:0.72;transition:filter .5s ease, opacity .5s ease;
+}
 .exercise-row.locked .chk{pointer-events:none;}
 .card h2{font-size:13px;color:var(--ink-dim);letter-spacing:0.1em;margin-bottom:12px;}
 .split-badge{
@@ -917,7 +918,7 @@ const PROGRAM = {
     {name:"Barbell Hip Thrust", target:"4x8"},
     {name:"Deadlift (stop if it aggravates the knee — swap to Romanian Deadlift)", target:"3x5"},
     {name:"Cable Pull-Through", target:"3x12"},
-    {name:"Seated Leg Curl (machine)", target:"3x12"},
+    {name:"Nordic Hamstring Curl (anchor feet, or have a partner hold them)", target:"3x8"},
     {name:"Standing Calf Raise (machine)", target:"4x15"},
   ],
   Cardio: [
@@ -942,7 +943,7 @@ const PROGRAM = {
   Legs: [
     {name:"Romanian Deadlift", target:"3x10"},
     {name:"Standing Cable Glute Kickback", target:"3x12/leg"},
-    {name:"Lying Leg Curl (machine)", target:"3x12"},
+    {name:"Single-Leg Romanian Deadlift (DB)", target:"3x8/leg"},
     {name:"Bike/Rower Intervals — skip treadmill for now (1min hard/2min easy)", target:"8 rounds"},
   ],
   Rest: [],
@@ -1099,14 +1100,15 @@ async function renderToday(){
   sessionCard.classList.toggle("session-done", locked);
 
   const btn = document.getElementById("completeBtn");
-  btn.textContent = locked ? "✓ Day Complete — Locked" : "Mark Day Complete";
-  btn.className = "complete-btn"+(locked?" done locked":"");
+  btn.textContent = locked ? "✓ Day Complete — Tap to Unlock" : "Mark Day Complete";
+  btn.className = "complete-btn"+(locked?" done":"");
   btn.onclick = async ()=>{
-    if(rec.completed) return; // locked once completed — no toggling back
-    rec.completed = true;
+    rec.completed = !rec.completed;
     await saveDayRecord(selectedDate,rec);
-    fireNeonBlast(btn);
-    fireConfetti(btn, 14);
+    if(rec.completed){
+      fireNeonBlast(btn);
+      fireConfetti(btn, 14);
+    }
     renderToday();
     renderChain(); renderWeek(); renderMonth();
   };
